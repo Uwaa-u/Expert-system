@@ -1,4 +1,7 @@
-from tkinter import *
+import tkinter as tk
+from tkinter import ttk, messagebox
+import tkinter
+
 
 # --- Student class ---
 class Student:
@@ -22,7 +25,7 @@ class Advisor:
             self.facts.add("3D artist")
         
         if self.student.interest == "Active sport":
-            self.fact.add("Athletic")
+            self.facts.add("Athletic")
                             
         if self.student.interest == "Coding":
             self.facts.add("interested in programming")
@@ -599,7 +602,7 @@ class Advisor:
             "gamer",
             "tech-savvy",
             "academically strong"
-        }.issubset(self.facts) and self.match_goal_pair("Game Development", "Computer Science"):
+        }.issubset(self.facts) and self.match_goal_pair("Undecided", "Computer Science"):
             self.advice = (
                 "Recommendations: Your passion for video gaming and technology can lead to careers like:\n"
                 "- Game Developer\n"
@@ -644,6 +647,7 @@ class Advisor:
                 "- English Literature\n"
                 "- Communication Arts"
             )
+        
 
 
 
@@ -656,75 +660,110 @@ class Advisor:
         return self.advice
 
 # --- GUI class ---
-class AdvisorGUI:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Educational Advising System")
-        self.root.geometry("450x500")
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+
+class AdvisorApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Student Career Advisor")
+        self.geometry("600x600")
+        self.configure(bg="#f7f7fa")
 
         self.student = Student()
 
-        self.interest_options = [
-            "3D modeling/animation", "Active sports", "Coding", "Drawing/Painting",
-            "Fashion Design", "Digital Editing", "Fixing gadgets", "Graphic Design",
-            "Journaling", "Learning new language", "Photography", "Programming",
-            "Reading Novels", "Science experiments", "Singing", "Solving puzzles",
-            "Thrifting/Online Selling", "Traveling", "Video Gaming", "Vlogging", "Writing stories"
-        ]
+        # --- Input Frame ---
+        self.input_frame = ttk.LabelFrame(self, text="Student Information", padding=15)
+        self.input_frame.pack(fill="x", padx=20, pady=10)
 
-        self.fav_subs = ["Mathematics", "English", "Filipino", "MAPEH", "Computer", "Science"]
+        # Interest
+        ttk.Label(self.input_frame, text="Interest:").grid(row=0, column=0, sticky="w")
+        self.interest_cb = ttk.Combobox(self.input_frame, values=[ 
+            "3D modeling/animation", "Active sport", "Coding", "Drawing/Painting", "Digital Editing",
+            "Fashion Design", "Fixing gadgets", "Graphic Design", "Journaling", "Learning new language",
+            "Photography", "Programming", "Reading novels", "Science experiments", "Singing",
+            "Solving puzzles", "Thrifting/Online Selling", "Traveling", "Video Gaming", "Vlogging", "Writing stories"
+        ])
+        self.interest_cb.grid(row=0, column=1, sticky="ew")
 
-        self.career_goals = [
-            "Accounting","Undecided", "Architecture", "Biology", "Business Administration",
-            "Chemical Engineering", "Civil Engineering", "Communication", "Computer Science",
-            "Criminology", "Economics", "Education", "Electrical Engineering",
-            "Environmental Science", "Finance", "Fine Arts", "Hospitality Management",
-            "Information Technology", "Journalism", "Law", "Marketing",
-            "Mechanical Engineering", "Medicine", "Nursing", "Pharmacy",
-            "Political Science", "Psychology", "Public Administration", "Social Work",
-            "Sociology", "Theater Arts"
-        ]
+        # Favorite Subject
+        ttk.Label(self.input_frame, text="Favorite Subject:").grid(row=1, column=0, sticky="w")
+        self.fav_sub_cb = ttk.Combobox(self.input_frame, values=[
+            "Computer", "English", "Mathematics", "Filipino", "MAPEH", "Science"
+        ])
+        self.fav_sub_cb.grid(row=1, column=1, sticky="ew")
 
-        # GUI Elements
-        Label(root, text="Choose your interest:").pack(pady=5)
-        self.interest_var = StringVar(value=self.interest_options[0])
-        OptionMenu(root, self.interest_var, *self.interest_options).pack()
+        # Academic Performance
+        ttk.Label(self.input_frame, text="Academic Performance:").grid(row=2, column=0, sticky="w")
+        self.academic_cb = ttk.Combobox(self.input_frame, values=["good", "bad"])
+        self.academic_cb.grid(row=2, column=1, sticky="ew")
 
-        Label(root, text="What is your favorite subject:").pack(pady=5)
-        self.favsub_var = StringVar(value=self.fav_subs[0])
-        OptionMenu(root, self.favsub_var, *self.fav_subs).pack()
+        # First Goal
+        ttk.Label(self.input_frame, text="First Goal:").grid(row=3, column=0, sticky="w")
+        self.first_goal_cb = ttk.Combobox(self.input_frame, values=[
+            "Undecided", "Accounting", "Architecture", "Biology", "Business Administration",
+            "Chemical Engineering", "Civil Engineering", "Communication", "Computer Science", "Criminology",
+            "Economics", "Education", "Electrical Engineering", "Environmental Science", "Finance",
+            "Fine Arts", "Hospitality Management", "Information Technology", "Journalism", "Law",
+            "Marketing", "Mechanical Engineering", "Medicine", "Nursing", "Pharmacy",
+            "Political Science", "Psychology", "Public Administration", "Social Work", "Sociology", "Theater Arts"
+        ])
+        self.first_goal_cb.grid(row=3, column=1, sticky="ew")
 
-        Label(root, text="What is your First Career Goal:").pack(pady=5)
-        self.goal1_var = StringVar(value=self.career_goals[0])
-        OptionMenu(root, self.goal1_var, *self.career_goals).pack()
+        # Second Goal
+        ttk.Label(self.input_frame, text="Second Goal:").grid(row=4, column=0, sticky="w")
+        self.second_goal_cb = ttk.Combobox(self.input_frame, values=self.first_goal_cb["values"])
+        self.second_goal_cb.grid(row=4, column=1, sticky="ew")
 
-        Label(root, text="What is your Second Career Goal:").pack(pady=5)
-        self.goal2_var = StringVar(value=self.career_goals[1])
-        OptionMenu(root, self.goal2_var, *self.career_goals).pack()
+        # --- Submit Button ---
+        self.submit_btn = ttk.Button(self, text="Get Advice", command=self.get_advice)
+        self.submit_btn.pack(pady=10)
 
-        Label(root, text="Enter your Academic Performance (good/bad):").pack(pady=5)
-        self.performance_entry = Entry(root)
-        self.performance_entry.pack()
+        restart_button = ttk.Button(self, text="Restart", command=self.restart_app)
+        restart_button.pack(pady=5)
 
-        Button(root, text="Get Advice", command=self.get_advice).pack(pady=15)
+        # --- Output ---
+        self.output_text = tk.Text(self, wrap="word", height=12, width=70, bg="#f0f0f0")
+        self.output_text.pack(padx=20, pady=10)
+
+    def restart_app(self):
+        # Reset all input fields
+        self.interest_cb.set('')
+        self.fav_sub_cb.set('')
+        self.academic_cb.set('')
+        self.first_goal_cb.set('')
+        self.second_goal_cb.set('')
+
+        # Clear result text
+        self.output_text.config(state='normal')
+        self.output_text.delete("1.0", tk.END)
+        self.output_text.config(state='disabled')
 
     def get_advice(self):
-        # Update student data from user input
-        self.student.interest = self.interest_var.get()
-        self.student.fav_sub = self.favsub_var.get()
-        self.student.first_goal = self.goal1_var.get()
-        self.student.second_goal = self.goal2_var.get()
-        self.student.academic_performance = self.performance_entry.get().lower()
+        # Get values from GUI and assign to Student instance
+        self.student.interest = self.interest_cb.get()
+        self.student.fav_sub = self.fav_sub_cb.get()
+        self.student.academic_performance = self.academic_cb.get()
+        self.student.first_goal = self.first_goal_cb.get()
+        self.student.second_goal = self.second_goal_cb.get()
 
+        # Validate input
+        if not all([self.student.interest, self.student.fav_sub, self.student.academic_performance,
+                    self.student.first_goal, self.student.second_goal]):
+            messagebox.showwarning("Missing Information", "Please fill out all fields.")
+            return
+
+        # Get advice
         advisor = Advisor(self.student)
         advice = advisor.advise()
 
-        # Show advice
-        from tkinter import messagebox
-        messagebox.showinfo("Advice", advice)
+        # Display result
+        self.output_text.delete(1.0, tk.END)
+        self.output_text.insert(tk.END, advice)
 
-# --- Main ---
+
+# --- Run the App ---
 if __name__ == "__main__":
-    root = Tk()
-    app = AdvisorGUI(root)
-    root.mainloop()
+    app = AdvisorApp()
+    app.mainloop()
